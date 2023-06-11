@@ -1,1 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game Events and Equipment</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <style>
+    body {
+      background-image: url('olympic.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
 
+    .half {
+      width: 50%;
+      float: left;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .left {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .right {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .half h2 {
+      margin-top: 0;
+    }
+
+    .half form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .half label {
+      margin-bottom: 5px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: rgb(222, 245, 14); /* Set the color of the h2 headings to yellow */
+    }
+    .half input[type="text"],
+    .half input[type="date"] {
+      margin-bottom: 10px;
+      padding: 5px;
+    }
+
+    .half button[type="submit"] {
+      padding: 10px;
+    }
+
+    #gameList {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Game Events and Equipment</h1>
+  </header>
+
+  <main>
+    <section class="half left">
+      <h2>Add a New Game Event</h2>
+      <form id="gameForm">
+        <label for="gameName">Game Name:</label>
+        <input type="text" id="gameName" name="gameName" required>
+
+        <label for="gameDate">Game Date:</label>
+        <input type="date" id="gameDate" name="gameDate" required>
+
+        <label for="gameLink">Game Link:</label>
+        <input type="text" id="gameLink" name="gameLink" required>
+
+        <button type="submit">Add Event</button>
+      </form>
+    </section>
+
+    <section class="half right">
+      <h2>Suggest Game Equipment</h2>
+      <form id="equipmentForm">
+        <label for="equipmentName">Equipment Name:</label>
+        <input type="text" id="equipmentName" name="equipmentName" required>
+
+        <label for="equipmentCompany">Preferred Company:</label>
+        <input type="text" id="equipmentCompany" name="equipmentCompany" required>
+
+        <label for="equipmentLink">Company Link:</label>
+        <input type="text" id="equipmentLink" name="equipmentLink" required>
+
+        <button type="submit">Suggest Equipment</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Upcoming Game Events</h2>
+      <ul id="gameList"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
