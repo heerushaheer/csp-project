@@ -119,7 +119,7 @@ body {
     background-color: #286090;
   }
 
-button{
+.home-page-button{
     paddinng:10px;
     color:white;
     background:blue;
