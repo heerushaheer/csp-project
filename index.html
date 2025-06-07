@@ -37,8 +37,12 @@
           <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
         </button>
         <span id="userWelcome" class="user-welcome" aria-live="polite" hidden>Welcome, <strong id="userNameDisplay"></strong></span>
-        <button id="loginBtn" aria-haspopup="dialog" aria-controls="loginModal">Login</button>
-        <button id="signupBtn" aria-haspopup="dialog" aria-controls="signupModal">Sign Up</button>
+        <!-- Separate buttons for roles -->
+        <button id="studentLoginBtn">Student Login</button>
+        <button id="teacherLoginBtn">Teacher Login</button>
+        <button id="studentSignupBtn">Student Sign Up</button>
+        <button id="teacherSignupBtn">Teacher Sign Up</button>
+
         <button id="logoutBtn" hidden>Logout</button>
         <div class="search-container" id="searchContainerHeader">
           <input
@@ -52,6 +56,8 @@
         </div>
       </nav>
     </header>
+    <button id="backToWelcomeBtn" class="back-button" aria-label="Back to welcome page">← Back to Welcome</button>
+
 
     <div id="appContainer">
       <aside id="sidebar" aria-label="Select your class and subjects" tabindex="0" class="hidden">

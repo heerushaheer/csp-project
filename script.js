@@ -501,6 +501,13 @@ document.addEventListener('DOMContentLoaded', () => {
       updateUIForLoginState();
       searchInput.focus();
     });
+
+    const backToWelcomeBtn = document.getElementById('backToWelcomeBtn');
+backToWelcomeBtn.addEventListener('click', () => {
+  mainApp.classList.add('hidden');
+  welcomePage.classList.remove('hidden');
+});
+
   
     // Filters
     filterBtn.addEventListener('click', () => {
