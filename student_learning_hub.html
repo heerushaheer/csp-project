@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BrightPath Student Learning Hub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  :root {
+    --primary-color: #31708E;
+    --secondary-color: #E6F2F7;
+    --accent-color: #5CB85C;
+    --text-color: #333;
+    --background-color: #fff;
+    --header-height: 60px;
+    --sidebar-width: 260px;
+    --filter-icon-size: 24px;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0; padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    height: 100%;
+    overflow-x: hidden;
+  }
+  /* Welcome page */
+  #welcomePage {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    color: white; text-align: center;
+    padding: 1rem; z-index: 1000;
+  }
+  #welcomeOverlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.65);
+    z-index: 1001;
+  }
+  #welcomeContent {
+    position: relative;
+    max-width: 700px;
+    z-index: 1010;
+  }
+  #welcomeContent h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.95);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  #welcomeContent p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.9);
+  }
+  #enterBtn {
+    background-color: var(--accent-color);
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 40px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 6px 15px rgba(92, 184, 92, 0.7);
+    transition: background-color 0.3s ease;
+  }
+  #enterBtn:hover, #enterBtn:focus {
+    background-color: #448d44;
+    outline: none;
+  }
+
+  /* Main app and layout */
+  #mainApp {
+    display: none;
+    height: 100vh;
+    flex-direction: column;
+  }
+  header {
+    height: var(--header-height);
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: 1.2px;
+    user-select: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  nav.header-nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  nav.header-nav button, nav.header-nav span.user-welcome {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 0.3rem 1.1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+  nav.header-nav button:hover, nav.header-nav button:focus {
+    background-color: white;
+    color: var(--primary-color);
+    outline: none;
+  }
+  nav.header-nav span.user-welcome {
+    border: none;
+    cursor: default;
+    padding: 0.3rem 0.6rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  nav.header-nav button#logoutBtn {
+    border: 2px solid white;
+  }
+  nav.header-nav button#logoutBtn:hover, nav.header-nav button#logoutBtn:focus {
+    background-color: white;
+    color: var(--primary-color);
+    outline: none;
+  }
+  #appContainer {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    background-color: var(--secondary-color);
+    position: relative;
+  }
+
+  /* Sidebar styles */
+  aside#sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background-color: var(--primary-color);
+    color: white;
+    overflow-y: auto;
+    padding: 1rem 0;
+    box-shadow: 4px 0 8px rgba(0,0,0,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1500;
+  }
+  aside#sidebar.show {
+    transform: translateX(0);
+  }
+  aside#sidebar .section-title {
+    font-weight: 700;
+    font-size: 1.4rem;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    user-select: none;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 0.3rem;
+  }
+  #classList, #subjectList {
+    list-style: none;
+    padding: 0 1.5rem;
+    margin: 0 0 1.5rem 0;
+  }
+  #classList li, #subjectList li {
+    margin-bottom: 0.4rem;
+  }
+  #classList li label, #subjectList li label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    font-weight: 600;
+  }
+  #classList input, #subjectList input {
+    cursor: pointer;
+  }
+  #filterBtn {
+    margin: 0 1.5rem;
+    padding: 0.6rem;
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    width: calc(100% - 3rem);
+  }
+  #filterBtn:hover, #filterBtn:focus {
+    background-color: #449d54;
+    outline: none;
+  }
+
+  /* Main content */
+  main#mainContent {
+    flex: 1;
+    padding: 1.5rem 2rem;
+    overflow-y: auto;
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+  }
+  main#mainContent.shifted {
+    margin-left: var(--sidebar-width);
+  }
+
+  /* Filter toggle button (funnel icon) */
+  #menuToggleBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    margin-right: 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+  #menuToggleBtn svg {
+    fill: white;
+    width: 24px;
+    height: 24px;
+  }
+
+  .search-container {
+    margin-left: 15px;
+    flex-grow: 1;
+  }
+  .search-container input[type="search"] {
+    width: 100%;
+    max-width: 400px;
+    border: 2px solid var(--primary-color);
+    border-radius: 30px;
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.25s ease-in-out;
+  }
+  .search-container input[type="search"]:focus {
+    border-color: var(--accent-color);
+  }
+
+  /* Resources grid */
+  .resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .resource-card {
+    background-color: var(--background-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.25s ease;
+  }
+  .resource-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 24px rgba(0,0,0,0.12);
+  }
+  .resource-card h3 {
+    margin-top: 0;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--primary-color);
+  }
+  .resource-card p {
+    flex-grow: 1;
+    margin: 0.7rem 0 1.1rem 0;
+    font-size: 0.95rem;
+    color: #555;
+  }
+  .resource-links a {
+    background-color: var(--accent-color);
+    color: white;
+    text-decoration: none;
+    padding: 0.55rem 1.1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.25s ease;
+    display: inline-block;
+  }
+  .resource-links a:hover,
+  .resource-links a:focus {
+    background-color: #1f7e41;
+    outline: none;
+  }
+
+  footer {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 1rem 1.5rem;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  /* Modal styles */
+  #modalBackdrop, #signupModalBackdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    overflow: auto;
+  }
+  .modal {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem 2.2rem;
+    width: 360px;
+    max-width: 90vw;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    position: relative;
+  }
+  .modal h2 {
+    margin-top: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--primary-color);
+  }
+  .modal label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.3rem;
+    margin-top: 1rem;
+    color: var(--text-color);
+  }
+  .modal input[type="text"],
+  .modal input[type="email"],
+  .modal input[type="password"],
+  .modal select {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1.8px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.25s ease;
+  }
+  .modal input[type="text"]:focus,
+  .modal input[type="email"]:focus,
+  .modal input[type="password"]:focus,
+  .modal select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+  }
+  .modal .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 0.4rem;
+  }
+  .modal .checkbox-group label {
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.95rem;
+  }
+  .modal input[type="checkbox"] {
+    margin-right: 0.3rem;
+    cursor: pointer;
+  }
+  .modal button.submit-btn {
+    margin-top: 2rem;
+    width: 100%;
+    background-color: var(--accent-color);
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.85rem 0;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(92, 184, 92, 0.75);
+    transition: background-color 0.3s ease;
+  }
+  .modal button.submit-btn:hover,
+  .modal button.submit-btn:focus {
+    background-color: #448d44;
+    outline: none;
+  }
+  .modal .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  .modal .close-btn:hover,
+  .modal .close-btn:focus {
+    color: var(--primary-color);
+    outline: none;
+  }
+  /* Responsive */
+  @media (max-width: 768px) {
+    #appContainer {
+      flex-direction: column;
+    }
+    aside#sidebar {
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      width: var(--sidebar-width);
+      height: calc(100vh - var(--header-height));
+      background-color: var(--primary-color);
+      z-index: 1500;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      box-shadow: 4px 0 8px rgba(0,0,0,0.15);
+    }
+    aside#sidebar.show {
+      transform: translateX(0);
+    }
+    main#mainContent.shifted {
+      margin-left: var(--sidebar-width);
+    }
+  }
+</style>
+</head>
+<body>
+  <!-- Welcome -->
+  <section id="welcomePage" role="main" aria-label="Welcome to BrightPath Student Learning Hub">
+    <div id="welcomeOverlay"></div>
+    <div id="welcomeContent">
+      <h1>BrightPath Student Learning Hub</h1>
+      <p>
+        Empowering students in 6th to 10th grades with free books and resources.<br />
+       <br />
+        <h3>"Dream big, learn boldly, and achieve beyond limits—your journey starts here."</h3>
+      </p>
+      <button id="enterBtn" aria-label="Enter platform to access educational resources">Enter Platform</button>
+      <section id="welcomeResourcesSection" style="margin-top:2rem; max-width:700px;">
+        <div id="welcomeResourcesGrid" class="resources-grid" aria-live="polite" aria-label="Educational resources list"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Main app -->
+  <section id="mainApp" aria-label="Educational resources platform content" tabindex="-1">
+    <header>
+      <div class="logo" aria-label="Platform name">BrightPath Student Learning Hub</div>
+      <nav class="header-nav" aria-label="User account navigation" style="align-items:center; gap:10px;">
+        <button id="menuToggleBtn" aria-label="Toggle filters sidebar" aria-expanded="false" title="Toggle Filters">
+          <!-- Funnel icon SVG -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 5h18v2l-7 7v5l-4-2v-3L3 7V5z" />
+          </svg>
+        </button>
+        <span class="user-welcome" id="userWelcome" style="display:none;">
+          Welcome, <strong id="userNameDisplay"></strong>
+        </span>
+        <button id="loginBtn" aria-haspopup="dialog" aria-controls="loginModal">Login</button>
+        <button id="signupBtn" aria-haspopup="dialog" aria-controls="signupModal">Sign Up</button>
+        <button id="logoutBtn" style="display:none;">Logout</button>
+        <div class="search-container" id="searchContainerHeader" style="margin-left: 15px; flex-grow: 1;">
+          <input type="search" id="searchInput" placeholder="Search materials..." aria-label="Search educational materials" autocomplete="off" style="height: 32px; font-size: 14px; padding: 0 10px; border-radius: 20px; border: none; width: 100%;" />
+        </div>
+      </nav>
+    </header>
+
+    <div id="appContainer">
+      <aside id="sidebar" aria-label="Select your class and subjects">
+        <div class="section-title">Classes</div>
+        <ul id="classList" role="list" aria-label="Classes selection" tabindex="0">
+          <li><label><input type="checkbox" data-class="6" /> 6th Grade</label></li>
+          <li><label><input type="checkbox" data-class="7" /> 7th Grade</label></li>
+          <li><label><input type="checkbox" data-class="8" /> 8th Grade</label></li>
+          <li><label><input type="checkbox" data-class="9" /> 9th Grade</label></li>
+          <li><label><input type="checkbox" data-class="10" /> 10th Grade</label></li>
+        </ul>
+        <div class="section-title">Subjects</div>
+        <ul id="subjectList" role="list" aria-label="Subjects selection" tabindex="0">
+          <li><label><input type="checkbox" data-subject="Mathematics" /> Mathematics</label></li>
+          <li><label><input type="checkbox" data-subject="Science" /> Science</label></li>
+          <li><label><input type="checkbox" data-subject="English" /> English</label></li>
+          <li><label><input type="checkbox" data-subject="History" /> History</label></li>
+          <li><label><input type="checkbox" data-subject="Geography" /> Geography</label></li>
+        </ul>
+        <button id="filterBtn">Apply Filters</button>
+      </aside>
+
+      <main id="mainContent">
+        <section id="resourcesGrid" class="resources-grid" aria-live="polite" aria-label="Educational resources list" tabindex="0"></section>
+      </main>
+    </div>
+    <footer>
+      &copy; 2024 BrightPath Student Learning Hub. Empowering education everywhere.
+    </footer>
+  </section>
+
+  <!-- Login Modal -->
+  <div id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc" tabindex="-1">
+    <div class="modal" role="document">
+      <button class="close-btn" aria-label="Close login modal">×</button>
+      <h2 id="modalTitle">Login</h2>
+      <form id="loginForm">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" name="loginEmail" required autocomplete="email" />
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" name="loginPassword" required autocomplete="current-password"/>
+        <button type="submit" class="submit-btn">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signupModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="signupModalTitle" aria-describedby="signupModalDesc" tabindex="-1" style="display:none;">
+    <div class="modal" role="document">
+      <button class="close-btn" aria-label="Close signup modal">×</button>
+      <h2 id="signupModalTitle">Sign Up</h2>
+      <form id="signupForm">
+        <label for="signupName">Full Name</label>
+        <input type="text" id="signupName" name="signupName" required autocomplete="name" />
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" name="signupEmail" required autocomplete="email" />
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" name="signupPassword" required autocomplete="new-password"/>
+        <label for="signupClass">Class</label>
+        <select id="signupClass" name="signupClass" required>
+          <option value="" disabled selected>Select your class</option>
+          <option value="6">6th Grade</option>
+          <option value="7">7th Grade</option>
+          <option value="8">8th Grade</option>
+          <option value="9">9th Grade</option>
+          <option value="10">10th Grade</option>
+        </select>
+        <label>Subjects of Interest</label>
+        <div class="checkbox-group" aria-label="Select subjects you want content for">
+          <label><input type="checkbox" name="subjects" value="Mathematics" /> Mathematics</label>
+          <label><input type="checkbox" name="subjects" value="Science" /> Science</label>
+          <label><input type="checkbox" name="subjects" value="English" /> English</label>
+          <label><input type="checkbox" name="subjects" value="History" /> History</label>
+          <label><input type="checkbox" name="subjects" value="Geography" /> Geography</label>
+        </div>
+        <button type="submit" class="submit-btn">Sign Up</button>
+      </form>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const welcomePage = document.getElementById('welcomePage');
+  const mainApp = document.getElementById('mainApp');
+  const enterBtn = document.getElementById('enterBtn');
+  const menuToggleBtn = document.getElementById('menuToggleBtn');
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('mainContent');
+  const filterBtn = document.getElementById('filterBtn');
+  const searchInput = document.getElementById('searchInput');
+  const resourcesGrid = document.getElementById('resourcesGrid');
+  const classList = document.getElementById('classList');
+  const subjectList = document.getElementById('subjectList');
+
+  const userWelcomeSpan = document.getElementById('userWelcome');
+  const userNameDisplay = document.getElementById('userNameDisplay');
+  const loginBtn = document.getElementById('loginBtn');
+  const signupBtn = document.getElementById('signupBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const loginModalClose = modalBackdrop.querySelector('.close-btn');
+  const loginForm = document.getElementById('loginForm');
+  const loginEmailInput = document.getElementById('loginEmail');
+  const loginPasswordInput = document.getElementById('loginPassword');
+
+  const signupModalBackdrop = document.getElementById('signupModalBackdrop');
+  const signupModalClose = signupModalBackdrop.querySelector('.close-btn');
+  const signupForm = document.getElementById('signupForm');
+  const signupName = document.getElementById('signupName');
+  const signupEmail = document.getElementById('signupEmail');
+  const signupPassword = document.getElementById('signupPassword');
+  const signupClass = document.getElementById('signupClass');
+
+  const resources = [
+    // 6th grade
+    { id: 1,class: 6, subject:'Mathematics', title: 'Basic Arithmetic E-book', description: 'Learn addition, subtraction, multiplication, division.', link: 'https://www.free-ebooks.net/education/Basic-Arithmetic.pdf', type: 'pdf' },
+    { id: 2,class: 6, subject:'Science', title: '6th Grade Science Notes', description: 'Simple and clear science concepts for beginners.', link: 'https://www.example.com/6th-science-notes.pdf', type: 'pdf' },
+    { id: 3,class: 6, subject:'English', title: 'English Grammar Basics', description: 'Fundamental grammar rules and exercises.', link: 'https://www.example.com/english-grammar-basics.pdf', type: 'pdf' },
+    { id: 4,class: 6, subject:'History', title: 'Ancient Civilizations Video', description: 'Introduction to ancient world history.', link: 'https://www.youtube.com/watch?v=ancientCiv', type: 'video' },
+    // 7th grade
+    { id: 5,class: 7, subject:'Mathematics', title: '7th Grade Algebra', description: 'Learn basic algebraic expressions and equations.', link: 'https://www.example.com/7th-algebra.pdf', type: 'pdf' },
+    { id: 6,class: 7, subject:'Science', title: 'Physics Fundamentals', description: 'Physics concepts with real-life examples.', link: 'https://www.youtube.com/watch?v=physicsFundamentals', type: 'video' },
+    { id: 7,class: 7, subject:'Geography', title: 'World Geography Notes', description: 'Geographical features and maps study.', link: 'https://www.example.com/7th-geography.pdf', type: 'pdf' },
+    { id: 8,class: 7, subject:'English', title: 'Creative Writing Workbook', description: 'Improve your writing skills with exercises.', link: 'https://www.example.com/creative-writing.pdf', type: 'pdf' },
+    // 8th grade
+    { id: 9,class: 8, subject:'Mathematics', title: 'Geometry Basics', description: 'Shapes, theorems and properties explained.', link: 'https://www.example.com/8th-geometry.pdf', type: 'pdf' },
+    { id: 10,class: 8, subject:'Science', title: 'Chemistry Intro Video', description: 'Basics of atoms, molecules and reactions.', link: 'https://www.youtube.com/watch?v=chemistryIntro', type: 'video' },
+    { id: 11,class: 8, subject:'History', title: 'Medieval History Notes', description: 'An overview of the medieval period.', link: 'https://www.example.com/8th-history.pdf', type: 'pdf' },
+    { id: 12,class: 8, subject:'English', title: 'Reading Comprehension Texts', description: 'Practice passages and questions.', link: 'https://www.example.com/reading-comprehension.pdf', type: 'pdf' },
+    // 9th grade
+    { id: 13,class: 9, subject:'Mathematics', title: 'Algebra II E-book', description: 'Deepen your algebra knowledge.', link: 'https://www.example.com/9th-algebra2.pdf', type: 'pdf' },
+    { id: 14,class: 9, subject:'Science', title: 'Biology Basics Video', description: 'Cell structure and functions explained.', link: 'https://www.youtube.com/watch?v=biologyBasics', type: 'video' },
+    { id: 15,class: 9, subject:'Geography', title: 'Climate and Environment Notes', description: 'Understanding climate change and environment.', link: 'https://www.example.com/9th-geography.pdf', type: 'pdf' },
+    { id: 16,class: 9, subject:'English', title: 'Advanced Grammar Rules', description: 'Detailed explanations and examples.', link: 'https://www.example.com/advanced-grammar.pdf', type: 'pdf' },
+    // 10th grade
+    { id: 17,class: 10, subject:'Mathematics', title: 'Trigonometry Primer', description: 'Learn about triangles and functions.', link: 'https://www.example.com/10th-trigonometry.pdf', type: 'pdf' },
+    { id: 18,class: 10, subject:'Science', title: 'Physics Concepts Video', description: 'Learn about forces, motion and energy.', link: 'https://www.youtube.com/watch?v=physicsConcepts', type: 'video' },
+    { id: 19,class: 10, subject:'History', title: 'Modern History Notes', description: 'Events from 18th century onwards.', link: 'https://www.example.com/10th-history.pdf', type: 'pdf' },
+    { id: 20,class: 10, subject:'English', title: 'Literature Study Guide', description: 'Analyzing classics and poetry.', link: 'https://www.example.com/literature-guide.pdf', type: 'pdf' },
+
+
+    // Popular External Resources (all classes etc)
+    { id: 21,class: null, subject:null, title: 'Khan Academy', description: 'World-class free courses in all subjects and grades.', link: 'https://www.khanacademy.org', type: 'link' },
+    { id: 22,class: null, subject:null, title: 'OpenStax Textbooks', description: 'Free peer-reviewed textbooks for multiple subjects.', link: 'https://openstax.org', type: 'link' },
+    { id: 23,class: null, subject:null, title: 'CK-12 Foundation', description: 'Explore a wide range of free educational content.', link: 'https://www.ck12.org/student/', type: 'link' }
+  ];
+
+  
+
+  let currentUser = null;
+
+  function saveUser(user) {
+    if (!user || !user.email) return;
+    localStorage.setItem('user_' + user.email, JSON.stringify(user));
+  }
+
+  function getUser(email) {
+    const u = localStorage.getItem('user_' + email);
+    return u ? JSON.parse(u) : null;
+  }
+
+  function getFilters() {
+    const selectedClasses = [...classList.querySelectorAll('input[type=checkbox]:checked')].map(cb => parseInt(cb.dataset.class));
+    const selectedSubjects = [...subjectList.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.dataset.subject);
+    return { selectedClasses, selectedSubjects };
+  }
+
+  function filterResources(searchTerm='') {
+    searchTerm = searchTerm.toLowerCase().trim();
+    let filtered;
+    if(currentUser){
+      filtered = resources.filter(r => {
+        if(r.class === null && r.subject === null){
+          return !searchTerm || r.title.toLowerCase().includes(searchTerm) || r.description.toLowerCase().includes(searchTerm);
+        }
+        if(r.class === currentUser.class && currentUser.subjects.includes(r.subject)){
+          return !searchTerm || r.title.toLowerCase().includes(searchTerm) || r.description.toLowerCase().includes(searchTerm);
+        }
+        return false;
+      });
+    } else {
+      const { selectedClasses, selectedSubjects } = getFilters();
+      filtered = resources.filter(r => {
+        if(r.class === null && r.subject === null) return true;
+        if(selectedClasses.length === 0 && selectedSubjects.length === 0) return true; // no filter means show all
+        return selectedClasses.includes(r.class) && selectedSubjects.includes(r.subject);
+      });
+      if(searchTerm){
+        filtered = filtered.filter(r => r.title.toLowerCase().includes(searchTerm) || r.description.toLowerCase().includes(searchTerm));
+      }
+    }
+    displayResources(filtered);
+  }
+
+  function displayResources(resourcesList) {
+    resourcesGrid.innerHTML = '';
+    if(resourcesList.length === 0){
+      const p = document.createElement('p');
+      p.textContent = 'No resources found matching your criteria.';
+      p.style.color = '#666';
+      resourcesGrid.appendChild(p);
+      return;
+    }
+    resourcesList.forEach(resource => {
+      const card = document.createElement('article');
+      card.className = 'resource-card';
+      card.tabIndex = 0;
+
+      const title = document.createElement('h3');
+      title.textContent = resource.title;
+      card.appendChild(title);
+
+      const desc = document.createElement('p');
+      desc.textContent = resource.description;
+      card.appendChild(desc);
+
+      if(resource.class !== null && resource.subject !== null){
+        const info = document.createElement('p');
+        info.style.fontSize = '0.8rem';
+        info.style.color = '#666';
+        info.textContent = `Class ${resource.class} | Subject: ${resource.subject}`;
+        card.appendChild(info);
+      }
+
+      const linksDiv = document.createElement('div');
+      linksDiv.className = 'resource-links';
+      const link = document.createElement('a');
+      link.href = resource.link;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      if(resource.type === 'pdf'){
+        link.setAttribute('download', '');
+        link.textContent = 'Download PDF';
+      }
+      else if(resource.type === 'video'){
+        link.textContent = 'Watch Video';
+      } else {
+        link.textContent = 'Visit';
+      }
+      linksDiv.appendChild(link);
+      card.appendChild(linksDiv);
+
+      resourcesGrid.appendChild(card);
+    });
+  }
+
+  enterBtn.addEventListener('click', () => {
+    welcomePage.style.display = 'none';
+    mainApp.style.display = 'flex';
+    updateUIForLoginState();
+    searchInput.focus();
+  });
+
+  menuToggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('show');
+    mainContent.classList.toggle('shifted');
+    const expanded = sidebar.classList.contains('show');
+    menuToggleBtn.setAttribute('aria-expanded', expanded);
+  });
+
+  filterBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    filterResources();
+    sidebar.classList.remove('show');
+    mainContent.classList.remove('shifted');
+    menuToggleBtn.setAttribute('aria-expanded', 'false');
+  });
+
+  searchInput.addEventListener('input', () => {
+    filterResources(searchInput.value);
+  });
+
+  loginBtn.addEventListener('click', () => openModal(modalBackdrop));
+  loginModalClose.addEventListener('click', () => closeModal(modalBackdrop));
+  modalBackdrop.addEventListener('click', e => { if(e.target === modalBackdrop) closeModal(modalBackdrop); });
+
+  signupBtn.addEventListener('click', () => openModal(signupModalBackdrop));
+  signupModalClose.addEventListener('click', () => closeModal(signupModalBackdrop));
+  signupModalBackdrop.addEventListener('click', e => { if(e.target === signupModalBackdrop) closeModal(signupModalBackdrop); });
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = loginEmailInput.value.toLowerCase().trim();
+    const password = loginPasswordInput.value.trim();
+    if(!email || !password){
+      alert('Enter email and password');
+      return;
+    }
+    const user = getUser(email);
+    if(!user) {
+      alert('User does not exist, please sign up');
+      return;
+    }
+    if(user.password !== password){
+      alert('Invalid password');
+      return;
+    }
+    currentUser = user;
+    closeModal(modalBackdrop);
+    updateUIForLoginState();
+    alert(`Welcome back, ${currentUser.name}!`);
+  });
+
+  signupForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = signupName.value.trim();
+    const email = signupEmail.value.toLowerCase().trim();
+    const password = signupPassword.value.trim();
+    const classVal = parseInt(signupClass.value);
+    const subjects = [...signupForm.querySelectorAll('input[name="subjects"]:checked')].map(cb => cb.value);
+    if(!name || !email || !password || !classVal || subjects.length === 0){
+      alert('Complete all fields and select at least one subject.');
+      return;
+    }
+    if(getUser(email)){
+      alert('User already exists, please login');
+      return;
+    }
+    const newUser = {name, email, password, class: classVal, subjects};
+    saveUser(newUser);
+    currentUser = newUser;
+    closeModal(signupModalBackdrop);
+    updateUIForLoginState();
+    alert(`Welcome, ${name}! Your account was created.`);
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    currentUser = null;
+    updateUIForLoginState();
+  });
+
+  function openModal(modal){
+    modal.style.display = 'flex';
+    const firstInput = modal.querySelector('input, select');
+    if(firstInput) firstInput.focus();
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function updateUIForLoginState(){
+    if(currentUser){
+      userWelcomeSpan.style.display = 'inline-flex';
+      userNameDisplay.textContent = currentUser.name;
+      loginBtn.style.display = 'none';
+      signupBtn.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+
+      classList.querySelectorAll('input[type=checkbox]').forEach(chk => {
+        chk.checked = (parseInt(chk.dataset.class) === currentUser.class);
+        chk.disabled = true;
+      });
+      subjectList.querySelectorAll('input[type=checkbox]').forEach(chk => {
+        chk.checked = currentUser.subjects.includes(chk.dataset.subject);
+        chk.disabled = true;
+      });
+      filterBtn.disabled = true;
+      filterBtn.style.opacity = '0.6';
+
+      filterResources();
+
+      sidebar.classList.remove('show');
+      mainContent.classList.remove('shifted');
+      menuToggleBtn.style.display = 'none';
+    } else {
+      userWelcomeSpan.style.display = 'none';
+      userNameDisplay.textContent = '';
+      loginBtn.style.display = 'inline-block';
+      signupBtn.style.display = 'inline-block';
+      logoutBtn.style.display = 'none';
+
+      classList.querySelectorAll('input[type=checkbox]').forEach(chk => {
+        chk.checked = false;
+        chk.disabled = false;
+      });
+      subjectList.querySelectorAll('input[type=checkbox]').forEach(chk => {
+        chk.checked = false;
+        chk.disabled = false;
+      });
+
+      filterBtn.disabled = false;
+      filterBtn.style.opacity = '1';
+
+      filterResources();
+
+      sidebar.classList.remove('show');
+      mainContent.classList.remove('shifted');
+      menuToggleBtn.style.display = 'inline-flex';
+      menuToggleBtn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  // Initialize default state on page load
+  filterResources();
+});
+</script>
+</body>
+</html>

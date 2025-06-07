@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Learning Hub</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Welcome -->
+  <section id="welcomePage" role="main" aria-label="Welcome to BrightPath Student Learning Hub">
+    <div id="welcomeOverlay"></div>
+    <div id="welcomeContent">
+      <h1> Student Learning Hub</h1>
+      <p>
+        Empowering students in 6th to 10th grades with free books and resources. 
+       <br />
+       <br />
+        <h3>"Dream big, learn boldly, and achieve beyond limits—your journey starts here."</h3>
+      </p>
+      <button id="enterBtn" aria-label="Enter platform to access educational resources">Enter Platform</button>
+      <section id="welcomeResourcesSection" style="margin-top:2rem; max-width:700px;">
+        <div id="welcomeResourcesGrid" class="resources-grid" aria-live="polite" aria-label="Educational resources list"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Main App -->
+  <section id="mainApp" aria-label="Educational resources platform content" tabindex="-1" class="hidden">
+    <header>
+      <div class="logo" aria-label="Platform name">Student Learning Hub</div>
+      <nav class="header-nav" aria-label="User account navigation">
+        <button id="menuToggleBtn" aria-label="Toggle filters sidebar" aria-expanded="false" title="Toggle Filters" class="icon-button" tabindex="0">
+          <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24"><path d="M3 5h18v2l-7 7v5l-4-2v-3L3 7V5z"/></svg>
+        </button>
+        <button id="dashboardToggleBtn" aria-label="Toggle dashboard" aria-expanded="false" title="Toggle Dashboard" class="icon-button" tabindex="0" style="margin-left: 0.5rem;">
+          <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+        </button>
+        <span id="userWelcome" class="user-welcome" aria-live="polite" hidden>Welcome, <strong id="userNameDisplay"></strong></span>
+        <button id="loginBtn" aria-haspopup="dialog" aria-controls="loginModal">Login</button>
+        <button id="signupBtn" aria-haspopup="dialog" aria-controls="signupModal">Sign Up</button>
+        <button id="logoutBtn" hidden>Logout</button>
+        <div class="search-container" id="searchContainerHeader">
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Search materials..."
+            aria-label="Search educational materials"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+      </nav>
+    </header>
+
+    <div id="appContainer">
+      <aside id="sidebar" aria-label="Select your class and subjects" tabindex="0" class="hidden">
+        <div class="section-title">Classes</div>
+        <ul id="classList" role="list" aria-label="Classes selection">
+          <li><label><input type="checkbox" data-class="6" /> 6th Grade</label></li>
+          <li><label><input type="checkbox" data-class="7" /> 7th Grade</label></li>
+          <li><label><input type="checkbox" data-class="8" /> 8th Grade</label></li>
+          <li><label><input type="checkbox" data-class="9" /> 9th Grade</label></li>
+          <li><label><input type="checkbox" data-class="10" /> 10th Grade</label></li>
+        </ul>
+
+        <div class="section-title">Subjects</div>
+        <ul id="subjectList" role="list" aria-label="Subjects selection">
+          <li><label><input type="checkbox" data-subject="Mathematics" /> Mathematics</label></li>
+          <li><label><input type="checkbox" data-subject="Science" /> Science</label></li>
+          <li><label><input type="checkbox" data-subject="English" /> English</label></li>
+          <li><label><input type="checkbox" data-subject="History" /> History</label></li>
+          <li><label><input type="checkbox" data-subject="Geography" /> Geography</label></li>
+        </ul>
+        <button id="filterBtn">Apply Filters</button>
+      </aside>
+
+      <main id="mainContent" tabindex="0" aria-label="Educational resources list">
+        <section id="resourcesGrid" class="resources-grid" aria-live="polite" aria-label="Educational resources list"></section>
+      </main>
+    </div>
+    <footer>
+      &copy; 2024 Student Learning Hub. Empowering education everywhere.
+    </footer>
+  </section>
+
+  <!-- Dashboard -->
+  <nav id="dashboard" aria-label="User dashboard" class="hidden" tabindex="-1">
+    <button id="closeDashboardBtn" aria-label="Close dashboard">← Back</button>
+    <h2>User Dashboard</h2>
+
+    <div class="dashboard-nav" role="tablist" aria-label="Dashboard navigation">
+      <button class="dashboard-tab active" data-tab="profile" role="tab" aria-selected="true" aria-controls="tabProfile">Profile</button>
+      <button class="dashboard-tab" data-tab="bookmarks" role="tab" aria-selected="false" aria-controls="tabBookmarks">Bookmarks</button>
+      <button class="dashboard-tab" data-tab="progress" role="tab" aria-selected="false" aria-controls="tabProgress">Progress</button>
+      <button class="dashboard-tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="tabSettings">Settings</button>
+    </div>
+
+    <div id="dashboardContent" class="dashboard-content" tabindex="0" aria-live="polite">
+      <!-- Dynamic dashboard content -->
+    </div>
+  </nav>
+
+  <!-- Login Modal -->
+  <div id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginLabel" tabindex="-1" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-btn" aria-label="Close login modal">×</button>
+      <h2 id="loginLabel">Login</h2>
+      <form id="loginForm" novalidate>
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" name="loginEmail" autocomplete="email" required />
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" name="loginPassword" autocomplete="current-password" required />
+        <button type="submit" class="submit-btn">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signupModal" role="dialog" aria-modal="true" aria-labelledby="signupLabel" tabindex="-1" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-btn" aria-label="Close signup modal">×</button>
+      <h2 id="signupLabel">Sign Up</h2>
+      <form id="signupForm" novalidate>
+        <label for="signupName">Full Name</label>
+        <input type="text" id="signupName" name="signupName" autocomplete="name" required />
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" name="signupEmail" autocomplete="email" required />
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" name="signupPassword" autocomplete="new-password" required />
+        <label for="signupClass">Class</label>
+        <select id="signupClass" name="signupClass" required>
+          <option value="" selected disabled>Select your class</option>
+          <option value="6">6th Grade</option>
+          <option value="7">7th Grade</option>
+          <option value="8">8th Grade</option>
+          <option value="9">9th Grade</option>
+          <option value="10">10th Grade</option>
+        </select>
+        <fieldset>
+          <legend>Subjects of Interest</legend>
+          <label><input type="checkbox" name="subjects" value="Mathematics" /> Mathematics</label>
+          <label><input type="checkbox" name="subjects" value="Science" /> Science</label>
+          <label><input type="checkbox" name="subjects" value="English" /> English</label>
+          <label><input type="checkbox" name="subjects" value="History" /> History</label>
+          <label><input type="checkbox" name="subjects" value="Geography" /> Geography</label>
+        </fieldset>
+        <button type="submit" class="submit-btn">Sign Up</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
